@@ -1,0 +1,19 @@
+
+# Load the analysis script that has lots of functions in it
+source("analyzeNNK.R");
+
+# Setup for the specific library requires sequence of library positions ONLY and position IDs in order. 
+setupNNKAnalysis(theSeq="VSTQLLIRSEQILNNAKIIIVTVKSIRIGPGQAFYYTFAQSSGGDLEITTHSIINMWQRAGQAMYTRDGGKDNNVNETFRPGGSDMRDNWRS",thePositions=c(219:224,236:250,267:282,323:337,385:396,417:443));
+
+# Unsorted Cells
+cat("example_unsort.data\n");
+A1 = loadFile("example_unsort.data",posBase="",numnt_min=-10,numnt_max=10);
+
+# Sorted Cells
+cat("exmaple_sorted.data\n");
+A2 = loadFile("example_sorted.data",posBase="",numnt_min=-10,numnt_max=10);
+
+# Compute frequencies and propensities
+Abs1sort.unsort.prop  = heatmapPlotAA.merge.propensity2(A2,A1,noplot=TRUE,posBase="");
+
+cat("Done Load\n");

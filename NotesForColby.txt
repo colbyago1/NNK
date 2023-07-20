@@ -1,0 +1,48 @@
+
+You may have to install some perl and R libraries to get this working.  Just try running them, if you get errors about libraries not being installed, install them. For perl use "CPAN", for R in R terminal write >install.packages("apackage");
+
+If you run into trouble just slack me.
+
+NNK Example:
+1. perl script to search for barcoded sequences: queryNNK.pl
+
+Try: ./queryNNK.pl example_library.fasta example_reads.fasta > log.example
+
+
+2. Analyze in R
+Start R
+run ">source("loadNNK.R")
+this will load "example_unsort.data" and "example_sorted.data"
+
+try typing:
+>plotPieDistributionAA(c("A1","A2"),pos=221,landscape=TRUE);
+
+
+
+"full" NNK  analysis pipeline
+1. Download sequencing from Illumina (Fwd read is usually "R1" and Rev read is usually "R2"). The sequences come as "fastq" files.
+
+2. Convert fastq to fasta
+for j in `ls *.fastq`; do j2=${j%.*};j3=`printf "%s.fasta" $j2`; echo $j $j3; sed -n '1~4s/^@/>/p;2~4p' $j > $j3;done
+
+3. Combine fwd and rev into single file "cat R1.fasta R2.fasta > combined.fasta" (note: there may be many unique libraries on one run so you first copy the R1/R2 fastas into its own directory) I usually make directories called "run1_unsort" and "run1_VRC01mat" (or whatever the ab is called).  Run1 because sometimes we have to re-analyze, and then I just make run2, run3, run4 etc directories as needed.
+
+4. Split Fasta into smaller files for parallelization on cluster
+for i in `ls -d ./run1_*`; do echo $i;cd $i; mkdir split_fastas; cd split_fastas; split -l 100000 ../combined.fasta; cd ../../;done
+
+4. Discover and tabulate barcoded sequences (Barcodes are on either side of NNK, so we can look for a "singleBarcode" or "dualBarcodes", the match length of the barcode can also be specified). This example is a single bar code of length 12 bp. queryNNK LIBRARY.fasta READS.fasta PARTIAL_BARCODE BARCODE_LENGTH
+
+LIBRARY_FASTA="/home/dwkulp/projects/NNK/Q23_CD4bs_Jul23/Q23PT2cNNK.fasta"
+for i in `ls -d ./run1_*`; do echo $i;cd $i; mkdir singleBar12; cd singleBar12; rm slurm*;for j in `ls ../split_fastas/x*`; do echo $j;k=$(basename -- "$j");slurmq --sbatch "/wistar/kulp/users/dwkulp/software/kulplab_scripts/deep_seq_anal/queryNNK.pl  $LIBRARY_FASTA $j 1 12 > log.single10.$k";done;cd ../..;
+
+5. Concatenate all the data files into one data file
+for i in `ls -d run1_*`; do j=${i//run2_/""}; k=`printf "%s/%s_singleBar12.data" $i $j`;echo $k;cat $i/singleBar12/*.data > $k; done
+
+6. Create a "loadNNK.R" file (see example, we can go through that)
+
+7. Analyze data using R.  (R terminal use >source("loadNNK.R"); to setup everything and load the data)  After loading data you can plot various enrichments and frequencies. there are comments at the bottom of 'loadNNK.R' you can read and play around with.
+
+
+
+
+
