@@ -37,7 +37,8 @@ Abs1sort.unsort.prop  = heatmapPlotAA.merge.propensity2(A2,A1,noplot=TRUE,posBas
 #getMostEnriched(Abs1sort.unsort.prop[[1]],cutoff=0.3);
 
 # Create all tables and figures
-#createTablesAndFigures(c("Abs1sort.unsort.prop"),"Abs1sort_analysis");
+#createTablesAndFigures(c("Abs1sort.unsort.prop"),"Abs1sort_analysis"); # this did not work for me CA
+#createTablesAndFigures(Abs1sort.unsort.prop,"Abs1sort_analysis"); # this did work for me CA
 
 # Condense mutations across sorts if you have them
 #b = condenseTables(tables=c("V033I1.unsort.prop","V033I1r1.unsort.prop","V033I1r2.unsort.prop"),minNumTables=3,tables.index=1,lower_cutoff=0);

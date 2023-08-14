@@ -322,8 +322,8 @@ computeGateFrequencies <- function(prop_list,pdfbase,cutoff=5){
   topCounts = prop_list[[4]];
   botCounts = prop_list[[5]];
   
-  topFreq = topCounts / sum(topCounts); # freq of counts / aa / pos of unsorted CA
-  botFreq = botCounts / sum(botCounts); # freq of counts / aa / pos of sorted CA
+  topFreq = topCounts / sum(topCounts); # freq of aa at that position / counts at whole data set CA
+  botFreq = botCounts / sum(botCounts); # freq of aa at that position / counts at whole data set CA
 
   botFreq[botFreq == 0] = NA;
   gateFreq = topFreq/botFreq; # ratio of top freq to bottom freq CA
@@ -364,11 +364,11 @@ computeGateFrequencies <- function(prop_list,pdfbase,cutoff=5){
   }
   gateFreqEnrichmentPerPosition = log10(gateFreqEnrichmentPerPosition);
   
-  pdfname = sprintf("relativeGateEnrichmentPerPosition_%s.pdf",pdfbase); # normalized log ratio of top freq to bottom freq (filter?) CA 
+  pdfname = sprintf("relativeGateEnrichmentPerPosition_%s.pdf",pdfbase); # normalized log ratio of top freq to bottom freq CA 
   cat(pdfname,"\n");
   heatmapPlotAA(gateFreqEnrichmentPerPosition,makepdf=pdfname);
 
-  fname = sprintf("relativeGateEnrichmentPerPosition_%s.csv",pdfbase); # normalized log ratio of top freq to bottom freq (filter?) CA  
+  fname = sprintf("relativeGateEnrichmentPerPosition_%s.csv",pdfbase); # normalized log ratio of top freq to bottom freq CA  
   rownames(gateFreqEnrichmentPerPosition) = code3; # aa CA
   colnames(gateFreqEnrichmentPerPosition) = pos1; # pos CA
   write.csv(x=gateFreqEnrichmentPerPosition,file=fname);
@@ -376,11 +376,11 @@ computeGateFrequencies <- function(prop_list,pdfbase,cutoff=5){
   gateFreqAll.wt =  (topCounts.wt / sum(topCounts)) / (botCounts.wt / sum(botCounts));
   gateFreqEnrichment = log10(gateFreq / gateFreqAll.wt);
 
-  pdfname = sprintf("relativeGateEnrichment_%s.pdf",pdfbase); # normalized log ratio of top freq to bottom freq (no filter?) CA
+  pdfname = sprintf("relativeGateEnrichment_%s.pdf",pdfbase); # ? CA
   cat(pdfname,"\n");
   heatmapPlotAA(gateFreqEnrichment,makepdf=pdfname);
 
-  fname = sprintf("relativeGateEnrichment_%s.csv",pdfbase); # normalized log ratio of top freq to bottom freq (no filter?) CA
+  fname = sprintf("relativeGateEnrichment_%s.csv",pdfbase); # ? CA
   rownames(gateFreqEnrichment) = code3; # aa CA
   colnames(gateFreqEnrichment) = pos1; # pos CA
   write.csv(x=gateFreqEnrichment,file=fname);
@@ -432,7 +432,6 @@ createTablesAndFigures <- function(prop_list,pdfbase){
 
   # Compute gate frequencies and write files.
   gf = computeGateFrequencies(prop_list, pdfbase=pdfbase);
-
   return(gf);
 }
 
